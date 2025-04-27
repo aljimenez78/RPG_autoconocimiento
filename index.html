@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ficha de Personaje de Autoconocimiento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/icono.png" type="image/x-icon">
+
+
+    <style>
+        /* League of Legends inspired palette */
+        /* Base background: Deep blue/purple gradient */
+        body {
+            font-family: 'Roboto', sans-serif; /* More modern readable font */
+            background: linear-gradient(to bottom right, #1a202c, #2d3748, #4a5568); /* Darker, metallic gradient */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #e2e8f0; /* Light text color */
+        }
+        /* Fantasy/Title font */
+        .font-fantasy {
+            font-family: 'Cinzel Decorative', cursive; /* Epic, decorative font */
+        }
+        /* Serif font (less prominent in LoL, but kept for structure if needed) */
+        .font-serif {
+            font-family: 'Georgia', serif; /* Can be adjusted or removed */
+        }
+        /* Background texture - more arcane/metallic */
+        .bg-parchment-texture {
+            background-image: url('https://www.transparenttextures.com/patterns/dark-mosaic.png'); /* Darker, geometric texture */
+            background-repeat: repeat;
+            background-color: #2d3748; /* Base dark color */
+            color: #e2e8f0; /* Light text color */
+        }
+         /* Lighter background for sections */
+         .bg-parchment-light {
+             background-color: rgba(74, 85, 104, 0.8); /* Slightly lighter, semi-transparent dark gray */
+             color: #e2e8f0; /* Light text color */
+         }
+
+         /* Custom styles for buttons - metallic/glowing feel */
+         button {
+             transition: all 0.2s ease-in-out;
+             box-shadow: 0 0 8px rgba(66, 153, 225, 0.6); /* Subtle blue glow */
+             border-radius: 9999px; /* Full rounded */
+             border-width: 2px;
+             border-color: #4299e1; /* Blue border */
+             color: #e2e8f0; /* Light text */
+             font-weight: bold;
+         }
+         button:hover {
+             transform: scale(1.05);
+             box-shadow: 0 0 12px rgba(66, 153, 225, 0.8); /* Stronger glow */
+             border-color: #63b3ed; /* Lighter blue */
+         }
+         button:active {
+             transform: scale(0.98);
+             box-shadow: 0 0 4px rgba(66, 153, 225, 0.4); /* Reduced glow */
+         }
+
+         /* Style for the question buttons (1-4 scale) */
+         .question-button {
+             padding: 8px 16px; /* px-4 py-2 */
+             border-radius: 9999px; /* rounded-full */
+             font-weight: bold; /* font-bold */
+             font-size: 0.875rem; /* text-sm */
+             transition: all 0.2s ease-in-out;
+             border-width: 2px; /* border-2 */
+             box-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+         }
+         .question-button:hover {
+             transform: scale(1.1);
+             box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+         }
+         .question-button.selected {
+             background-color: #38b2ac; /* bg-teal-500 - Cyan/Teal accent */
+             color: white; /* text-white */
+             border-color: #319795; /* border-teal-600 */
+             box-shadow: 2px 2px 6px rgba(56, 178, 172, 0.6); /* Teal glow */
+         }
+         .question-button:not(.selected) {
+             background-color: #4a5568; /* bg-gray-600 */
+             color: #e2e8f0; /* light text */
+             border-color: #718096; /* border-gray-500 */
+         }
+         .question-button:not(.selected):hover {
+              background-color: #718096; /* hover:bg-gray-500 */
+         }
+
+         /* Specific styles for the dashboard layout */
+         #character-sheet-dashboard {
+             position: relative;
+             overflow: hidden; /* Needed for absolute borders */
+         }
+         #character-sheet-dashboard .border-decorative {
+             position: absolute;
+             top: 0; bottom: 0; left: 0; right: 0;
+             pointer-events: none; /* Allow clicks to pass through */
+         }
+         /* Borders - more metallic/gold */
+         #character-sheet-dashboard .border-double { border: 8px double #ecc94b; } /* yellow-500 */
+         #character-sheet-dashboard .border-dashed {
+             top: 16px; bottom: 16px; left: 16px; right: 16px; /* inset-4 */
+             border: 4px dashed #ed8936; /* orange-500 */
+         }
+
+         /* Hide file input visually */
+         .hidden-file-input {
+             display: none;
+         }
+
+         /* Adjust text colors for dark background */
+         .text-brown-900 { color: #e2e8f0; } /* Light text */
+         .text-brown-800 { color: #cbd5e0; } /* Slightly darker light text */
+         .text-brown-700 { color: #a0aec0; } /* Even darker light text */
+         .text-brown-600 { color: #718096; } /* Gray text */
+         .text-gray-700 { color: #a0aec0; } /* Gray text */
+         .text-gray-500 { color: #718096; } /* Darker gray placeholder */
+
+         /* Specific button color overrides */
+         #start-button {
+             background: linear-gradient(to right, #f6e05e, #ed8936); /* Yellow to Orange */
+             border-color: #d69e2e; /* Darker yellow */
+             box-shadow: 0 0 8px rgba(237, 128, 54, 0.6); /* Orange glow */
+         }
+         #start-button:hover {
+             background: linear-gradient(to right, #f6ad55, #f9a66a);
+             border-color: #dd6b20;
+             box-shadow: 0 0 12px rgba(237, 128, 54, 0.8);
+         }
+
+         #basic-data-form button[type="submit"] {
+            background: linear-gradient(to right, #48bb78, #38b2ac); /* Green to Teal */
+            border-color: #38a169; /* Darker green */
+            box-shadow: 0 0 8px rgba(56, 178, 172, 0.6); /* Teal glow */
+         }
+         #basic-data-form button[type="submit"]:hover {
+             background: linear-gradient(to right, #68d391, #4fd1c5);
+             border-color: #2f855a;
+             box-shadow: 0 0 12px rgba(56, 178, 172, 0.8);
+         }
+
+         #submit-questionnaire-button {
+             background: linear-gradient(to right, #805ad5, #6b46c1); /* Purple */
+             border-color: #6b46c1; /* Darker purple */
+             box-shadow: 0 0 8px rgba(107, 70, 193, 0.6); /* Purple glow */
+         }
+         #submit-questionnaire-button:hover {
+             background: linear-gradient(to right, #9f7aea, #805ad5);
+             border-color: #553c9a;
+             box-shadow: 0 0 12px rgba(107, 70, 193, 0.8);
+         }
+
+         #generate-pdf-button {
+             background: linear-gradient(to right, #f56565, #ebf8ff); /* Red to light */
+             border-color: #c53030; /* Darker red */
+             box-shadow: 0 0 8px rgba(245, 101, 101, 0.6); /* Red glow */
+         }
+         #generate-pdf-button:hover {
+             background: linear-gradient(to right, #fc8181, #ffffff);
+             border-color: #9b2c2c;
+             box-shadow: 0 0 12px rgba(245, 101, 101, 0.8);
+         }
+
+        #copy-prompt-button {
+            background: linear-gradient(to right, #319795, #4fd1c5); /* Teal/Cyan */
+            border-color: #2c7a7b;
+            box-shadow: 0 0 6px rgba(56, 178, 172, 0.5);
+        }
+        #copy-prompt-button:hover {
+            background: linear-gradient(to right, #38b2ac, #81e6d9);
+            border-color: #235a5b;
+            box-shadow: 0 0 8px rgba(56, 178, 172, 0.7);
+        }
+
+        /* Stat number styling */
+        #character-sheet-dashboard .bg-brown-700 {
+            background-color: #ecc94b; /* Gold accent */
+            color: #2d3748; /* Dark text on gold */
+            box-shadow: 0 0 6px rgba(236, 201, 75, 0.7); /* Gold glow */
+        }
+
+
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app-container" class="w-full max-w-4xl">
+        </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Initialize jsPDF globally
+        const { jsPDF } = window.jspdf;
+    </script>
+
+
+    <script>
+        // Array de preguntas del cuestionario, agrupadas por habilidad
+        const questions = [
+          // Autoconocimiento
+          { skill: 'Autoconocimiento', text: 'Identifico mis emociones y cómo me afectan.' },
+          { skill: 'Autoconocimiento', text: 'Reconozco mis fortalezas y áreas de mejora.' },
+          { skill: 'Autoconocimiento', text: 'Entiendo mis valores y creencias.' },
+          // Manejo de Emociones
+          { skill: 'Manejo de Emociones', text: 'Puedo calmarme cuando estoy molesto/a.' },
+          { skill: 'Manejo de Emociones', text: 'Expreso mis emociones de manera adecuada.' },
+          { skill: 'Manejo de Emociones', text: 'Me recupero rápidamente de las decepciones.' },
+          // Manejo del Estrés
+          { skill: 'Manejo del Estrés', text: 'Tengo formas saludables de manejar el estrés.' },
+          { skill: 'Manejo del Estrés', text: 'Puedo identificar las causas de mi estrés.' },
+          { skill: 'Manejo del Estrés', text: 'Sé cuándo necesito tomar un descanso para no estresarme demasiado.' },
+          // Pensamiento Creativo
+          { skill: 'Pensamiento Creativo', text: 'Se me ocurren ideas nuevas y originales.' },
+          { skill: 'Pensamiento Creativo', text: 'Disfruto explorando diferentes posibilidades para un problema.' },
+          { skill: 'Pensamiento Creativo', text: 'Puedo ver las cosas desde diferentes perspectivas.' },
+          // Pensamiento Crítico
+          { skill: 'Pensamiento Crítico', text: 'Analizo la información antes de aceptarla como verdadera.' },
+          { skill: 'Pensamiento Crítico', text: 'Puedo identificar si algo no tiene sentido o es contradictorio.' },
+          { skill: 'Pensamiento Crítico', text: 'Considero las consecuencias antes de tomar una decisión importante.' },
+          // Solución de Problemas
+          { skill: 'Solución de Problemas', text: 'Cuando tengo un problema, busco diferentes soluciones.' },
+          { skill: 'Solución de Problemas', text: 'Puedo dividir un problema grande en partes más pequeñas y manejables.' },
+          { skill: 'Solución de Problemas', text: 'No me rindo fácilmente cuando enfrento dificultades.' },
+          // Toma de Decisiones
+          { skill: 'Toma de Decisiones', text: 'Puedo tomar decisiones importantes por mí mismo/a.' },
+          { skill: 'Toma de Decisiones', text: 'Considero los pros y contras antes de decidir.' },
+          { skill: 'Toma de Decisiones', text: 'Me siento cómodo/a con las decisiones que tomo.' },
+          // Empatía
+          { skill: 'Empatía', text: 'Intento entender cómo se sienten los demás.' },
+          { skill: 'Empatía', text: 'Me importa lo que les sucede a otras personas.' },
+          { skill: 'Empatía', text: 'Soy capaz de ponerme en el lugar de otra persona.' },
+          // Habilidades Interpersonales
+          { skill: 'Habilidades Interpersonales', text: 'Me llevo bien con diferentes tipos de personas.' },
+          { skill: 'Habilidades Interpersonales', text: 'Puedo trabajar en equipo de manera efectiva.' },
+          { skill: 'Habilidades Interpersonales', text: 'Sé cómo hacer amigos y mantener amistades.' },
+          // Comunicación Asertiva
+          { skill: 'Comunicación Asertiva', text: 'Expreso mis opiniones y sentimientos de forma clara y respetuosa.' },
+          { skill: 'Comunicación Asertiva', text: 'Puedo decir "no" cuando es necesario sin sentirme culpable.' },
+          { skill: 'Comunicación Asertiva', text: 'Defiendo mis derechos de manera justa.' },
+        ];
+
+        // Mapeo de puntuación bruta (3-12) a stat (1-5)
+        const mapScoreToStat = (score) => {
+            if (score >= 3 && score <= 5) return 1;
+            if (score >= 6 && score <= 7) return 2;
+            if (score >= 8 && score <= 9) return 3;
+            if (score >= 10 && score <= 11) return 4;
+            if (score === 12) return 5;
+            return 0; // Should not happen
+        };
+
+        // Interpretaciones basadas en la puntuación bruta (3-12)
+        const interpretations = {
+            'Autoconocimiento': {
+                '3-6': 'Parece que estás en las primeras etapas de explorar tu mundo interior. Tómate tiempo para reflexionar sobre tus pensamientos y sentimientos.',
+                '7-9': 'Tienes una buena comprensión de ti mismo/a, pero siempre hay más que descubrir. Sigue explorando tus motivaciones y reacciones.',
+                '10-12': '¡Excelente! Tienes un fuerte sentido de quién eres. Tu autoconocimiento es una brújula poderosa para tu vida.',
+            },
+            'Manejo de Emociones': {
+                '3-6': 'Identificar y manejar tus emociones puede ser un desafío. Practica nombrar lo que sientes y busca formas saludables de expresarlo.',
+                '7-9': 'Generalmente manejas bien tus emociones, pero hay momentos difíciles. Aprender nuevas técnicas de regulación emocional te será útil.',
+                '10-12': '¡Impresionante! Eres un/a maestro/a en el manejo de tus emociones. Esta habilidad te ayuda a navegar los altibajos de la vida con gracia.',
+            },
+            'Manejo del Estrés': {
+                '3-6': 'El estrés puede ser abrumador a veces. Identificar tus factores estresantes y encontrar actividades relajantes es un buen comienzo.',
+                '7-9': 'Tienes algunas estrategias para el estrés, pero podrías fortalecer tu caja de herramientas. Explora nuevas técnicas de relajación y manejo del tiempo.',
+                '10-12': '¡Fantástico! Sabes cómo mantener el estrés bajo control. Tu capacidad para manejar la presión es una gran fortaleza.',
+            },
+            'Pensamiento Creativo': {
+                '3-6': 'Explorar tu creatividad es una aventura. No tengas miedo de probar cosas nuevas y dejar volar tu imaginación.',
+                '7-9': 'Tienes chispas de creatividad. Nutre tu curiosidad y desafíate a pensar fuera de lo común.',
+                '10-12': '¡Wow! Tu mente es una fuente de ideas originales. Tu pensamiento creativo te abre puertas a infinitas posibilidades.',
+            },
+            'Pensamiento Crítico': {
+                '3-6': 'Analizar la información requiere práctica. Haz preguntas, busca diferentes fuentes y forma tu propia opinión.',
+                '7-9': 'Eres capaz de evaluar ideas, pero afinar tus habilidades de análisis te ayudará a ver el panorama completo con mayor claridad.',
+                '10-12': '¡Increíble! Tienes una mente aguda y analítica. Tu pensamiento crítico te permite tomar decisiones informadas y sabias.',
+            },
+            'Solución de Problemas': {
+                '3-6': 'Enfrentar problemas puede parecer difícil. Comienza por definir el problema y buscar ayuda si es necesario.',
+                '7-9': 'Eres bueno/a resolviendo problemas comunes, pero los desafíos complejos pueden requerir más esfuerzo. Desarrolla estrategias paso a paso.',
+                '10-12': '¡Admirable! Eres un/a solucionador/a de problemas nato/a. Tu habilidad para encontrar soluciones es invaluable.',
+            },
+            'Toma de Decisiones': {
+                '3-6': 'Tomar decisiones importantes puede generar ansiedad. Practica con decisiones pequeñas y confía gradualmente en tu juicio.',
+                '7-9': 'Generalmente tomas buenas decisiones, pero a veces dudas. Fortalecer tu confianza y considerar tus valores te guiará.',
+                '10-12': '¡Magnífico! Eres decisivo/a y confías en tu capacidad para elegir el mejor camino. Tu habilidad para tomar decisiones te impulsa hacia adelante.',
+            },
+            'Empatía': {
+                '3-6': 'Conectar con los sentimientos de otros es un viaje. Escucha activamente y observa las señales no verbales para entender mejor a quienes te rodean.',
+                '7-9': 'Tienes empatía, pero puedes profundizar tu conexión con los demás. Practica ponerte en los zapatos del otro con más frecuencia.',
+                '10-12': '¡Corazón noble! Tu empatía te permite conectar profundamente con los demás y construir relaciones significativas.',
+            },
+            'Habilidades Interpersonales': {
+                '3-6': 'Interactuar con otros puede ser un desafío. Practica la comunicación abierta y busca oportunidades para colaborar.',
+                '7-9': 'Te desenvuelves bien en situaciones sociales, pero puedes pulir tus habilidades para construir relaciones más fuertes y efectivas.',
+                '10-12': '¡Carismático/a! Eres un/a experto/a en relaciones interpersonales. Tu habilidad para conectar con la gente es un superpoder.',
+            },
+            'Comunicación Asertiva': {
+                '3-6': 'Expresar tus necesidades y opiniones puede ser difícil. Practica decir lo que piensas de forma clara y respetuosa.',
+                '7-9': 'Eres asertivo/a en algunas situaciones, pero puedes fortalecer tu voz. Encuentra el equilibrio entre ser directo/a y respetuoso/a.',
+                '10-12': '¡Voz poderosa! Te comunicas con claridad, respeto y confianza. Tu asertividad te permite defenderte y expresarte auténticamente.',
+            },
+        };
+
+        // Definir el orden de las habilidades para el dashboard
+        const skillOrder = [
+            'Autoconocimiento',
+            'Manejo de Emociones',
+            'Manejo del Estrés',
+            'Pensamiento Creativo',
+            'Pensamiento Crítico',
+            'Solución de Problemas',
+            'Toma de Decisiones',
+            'Empatía',
+            'Habilidades Interpersonales',
+            'Comunicación Asertiva',
+        ];
+
+        // State variables (using simple JS objects)
+        let currentStep = 'intro';
+        let userData = {
+            name: '',
+            age: '',
+            sex: '',
+            registrationDate: '',
+            registrationTime: '',
+        };
+        let answers = {}; // { questionIndex: value (1-4) }
+        let scores = {}; // { skill: totalScore (1-5 stat) }
+        let interpretationsResult = {}; // { skill: interpretationText }
+        let aiPrompt = '';
+        let characterImage = null; // For image upload (Data URL)
+
+        // Get the main container
+        const appContainer = document.getElementById('app-container');
+
+        // Render function to update the UI based on the current step
+        function render() {
+            appContainer.innerHTML = ''; // Clear previous content
+
+            switch (currentStep) {
+                case 'intro':
+                    renderIntro();
+                    break;
+                case 'basic-data':
+                    renderBasicDataForm();
+                    break;
+                case 'questionnaire':
+                    renderQuestionnaire();
+                    break;
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // --- Rendering Functions for each step ---
+
+        function renderIntro() {
+            const introDiv = document.createElement('div');
+            introDiv.className = 'text-center p-8 bg-parchment-texture rounded-lg shadow-lg border-4 border-double border-yellow-500'; /* Updated border */
+            introDiv.innerHTML = `
+                <h1 class="text-4xl font-fantasy mb-6 text-yellow-300">¡Bienvenido/a a tu Aventura de Autoconocimiento!</h1> <p class="text-lg font-serif mb-8 text-gray-300"> Prepárate para embarcarte en un viaje épico... ¡hacia ti mismo/a! Esta aplicación te ayudará a descubrir tus "Habilidades para la Vida" a través de un cuestionario divertido, presentado como una ficha de personaje de RPG. No es un examen, no hay respuestas correctas o incorrectas, solo una oportunidad para reflexionar y conocerte mejor. ¡Disfruta el proceso!
+                </p>
+                <button id="start-button"
+                  class="px-8 py-4 bg-gradient-to-r from-yellow-600 to-orange-700 text-white font-bold rounded-full shadow-lg hover:from-yellow-700 hover:to-orange-800 transform hover:scale-105 transition duration-300 ease-in-out border-2 border-yellow-800"
+                >
+                  Comenzar Aventura
+                </button>
+            `;
+            appContainer.appendChild(introDiv);
+
+            // Add event listener
+            document.getElementById('start-button').addEventListener('click', startApp);
+        }
+
+        function renderBasicDataForm() {
+            const basicDataDiv = document.createElement('div');
+            basicDataDiv.className = 'p-8 bg-parchment-texture rounded-lg shadow-lg border-4 border-double border-yellow-500 max-w-md mx-auto'; /* Updated border */
+            basicDataDiv.innerHTML = `
+                <h2 class="text-3xl font-fantasy mb-6 text-yellow-300 text-center">Datos Básicos del Aventurero</h2> <form id="basic-data-form" class="space-y-6">
+                  <div>
+                    <label for="name" class="block text-lg font-serif text-gray-300 mb-2">Nombre del Personaje:</label> <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value="${userData.name}"
+                      class="w-full px-4 py-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:border-blue-500" /* Updated input styles */
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label for="age" class="block text-lg font-serif text-gray-300 mb-2">Edad:</label> <input
+                      type="number"
+                      id="age"
+                      name="age"
+                      value="${userData.age}"
+                      class="w-full px-4 py-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:border-blue-500" /* Updated input styles */
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-lg font-serif text-gray-300 mb-2">Sexo:</label> <div class="flex flex-wrap gap-4">
+                      ${['Femenino', 'Masculino', 'No binario', 'Prefiero no decirlo/Otro'].map(sexOption => `
+                        <label class="inline-flex items-center text-gray-300"> <input
+                            type="radio"
+                            name="sex"
+                            value="${sexOption}"
+                            ${userData.sex === sexOption ? 'checked' : ''}
+                            class="form-radio text-blue-500" /* Updated radio color */
+                            required
+                          />
+                          <span class="ml-2 font-serif">${sexOption}</span>
+                        </label>
+                      `).join('')}
+                    </div>
+                  </div>
+                  <button type="submit"
+                    class="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-teal-700 text-white font-bold rounded-full shadow-lg hover:from-green-700 hover:to-teal-800 transform hover:scale-105 transition duration-300 ease-in-out border-2 border-green-800"
+                  >
+                    Siguiente: El Cuestionario
+                  </button>
+                </form>
+            `;
+            appContainer.appendChild(basicDataDiv);
+
+            // Add event listeners
+            const form = document.getElementById('basic-data-form');
+            form.addEventListener('submit', submitBasicData);
+            form.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', handleInputChange);
+            });
+        }
+
+        function renderQuestionnaire() {
+             // Group questions by skill for visual separation
+            const questionsBySkill = questions.reduce((acc, q) => {
+                if (!acc[q.skill]) {
+                    acc[q.skill] = [];
+                }
+                acc[q.skill].push(q);
+                return acc;
+            }, {});
+
+            const questionnaireDiv = document.createElement('div');
+            questionnaireDiv.className = 'p-8 bg-parchment-texture rounded-lg shadow-lg border-4 border-double border-yellow-500 max-w-2xl mx-auto'; /* Updated border */
+            questionnaireDiv.innerHTML = `
+                <h2 class="text-3xl font-fantasy mb-6 text-yellow-300 text-center">Tu Misión: El Cuestionario de Habilidades</h2> <div class="text-gray-300 font-serif mb-8 border-b-2 border-gray-600 pb-4"> <p class="mb-4">¡Hola! Este cuestionario es una herramienta para que explores tus "Habilidades para la Vida". Son como tus superpoderes internos que te ayudan a navegar el mundo, entenderte a ti mismo/a y relacionarte mejor con los demás.</p>
+                    <p class="mb-4 font-bold">Cómo responder:</p>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Lee cada afirmación y piensa en qué tan cierta es para ti en la mayoría de las situaciones.</li>
+                        <li>Elige la opción que mejor te represente:</li>
+                        <ul class="list-circle list-inside ml-4">
+                            <li><span class="font-bold">Rara vez:</span> Casi nunca me pasa o no lo hago. (1 punto)</li>
+                            <li><span class="font-bold">A veces:</span> Me pasa o lo hago de vez en cuando. (2 puntos)</li>
+                            <li><span class="font-bold">Frecuentemente:</span> Me pasa o lo hago a menudo. (3 puntos)</li>
+                            <li><span class="font-bold">Casi siempre:</span> Me pasa o lo hago casi todo el tiempo. (4 puntos)</li>
+                        </ul>
+                    </ul>
+                    <p class="font-bold italic">Sé honesto/a contigo mismo/a. No hay respuestas "buenas" o "malas". ¡Este es tu viaje de descubrimiento!</p>
+                </div>
+
+                <form id="questionnaire-form" class="space-y-8">
+                    ${skillOrder.map(skill => `
+                        <div class="border border-gray-600 rounded-md p-6 bg-parchment-light shadow-inner"> <h3 class="text-2xl font-fantasy text-yellow-300 mb-4 border-b border-gray-700 pb-2">${skill}</h3> <div class="space-y-6">
+                                ${questionsBySkill[skill].map(q => {
+                                    // Find the original index
+                                    const originalIndex = questions.findIndex(item => item.text === q.text && item.skill === q.skill);
+                                    const currentAnswer = answers[originalIndex];
+                                    return `
+                                        <div class="border-b border-gray-500 pb-4 last:border-b-0 last:pb-0"> <p class="text-lg font-serif text-gray-300 mb-3">${originalIndex + 1}. ${q.text}</p> <div class="flex justify-around items-center">
+                                                ${[1, 2, 3, 4].map(value => `
+                                                    <button
+                                                        type="button"
+                                                        class="question-button ${parseInt(currentAnswer, 10) === value ? 'selected' : ''}"
+                                                        data-question-index="${originalIndex}"
+                                                        data-value="${value}"
+                                                    >
+                                                        ${value === 1 ? 'Rara vez' : value === 2 ? 'A veces' : value === 3 ? 'Frecuentemente' : 'Casi siempre'}
+                                                    </button>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </form>
+
+                <div class="text-center mt-8">
+                    <button id="submit-questionnaire-button"
+                      class="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-700 text-white font-bold rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-800 transform hover:scale-105 transition duration-300 ease-in-out border-2 border-purple-800"
+                    >
+                      Ver mi Ficha de Personaje
+                    </button>
+                </div>
+            `;
+            appContainer.appendChild(questionnaireDiv);
+
+            // Add event listeners for question buttons
+            questionnaireDiv.querySelectorAll('.question-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.dataset.questionIndex;
+                    const value = this.dataset.value;
+                    handleAnswerChange(index, value);
+                    // Update button styles visually
+                    const buttonContainer = this.parentElement;
+                    buttonContainer.querySelectorAll('.question-button').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+            });
+
+            // Add event listener for submit button
+            document.getElementById('submit-questionnaire-button').addEventListener('click', submitQuestionnaire);
+        }
+
+        function renderDashboard() {
+            const dashboardDiv = document.createElement('div');
+            dashboardDiv.id = 'character-sheet-dashboard'; // Add ID for PDF capture
+            dashboardDiv.className = 'p-8 bg-parchment-texture rounded-lg shadow-lg border-4 border-double border-yellow-500 max-w-4xl mx-auto font-serif text-gray-300 relative overflow-hidden'; /* Updated border and text color */
+            dashboardDiv.innerHTML = `
+                <div class="border-decorative border-double border-yellow-500"></div> <div class="border-decorative border-dashed border-orange-500"></div> <h2 class="text-4xl font-fantasy text-center text-yellow-300 mb-8 border-b-4 border-gray-700 pb-4">Ficha de Personaje: ${userData.name || 'Aventurero Desconocido'}</h2> <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div class="md:col-span-1 flex flex-col items-center bg-parchment-light p-4 rounded-lg border border-gray-600 shadow-inner"> <h3 class="text-2xl font-fantasy text-yellow-300 mb-4">Retrato del Personaje</h3> <div id="character-image-preview" class="w-48 h-48 border-4 border-gray-700 rounded-lg overflow-hidden flex items-center justify-center bg-gray-800 mb-4"> ${characterImage ? `<img src="${characterImage}" alt="Character Portrait" class="w-full h-full object-cover" />` : `<span class="text-gray-500 text-center">Sube tu imagen aquí</span>`} </div>
+                         <label for="imageUpload" class="cursor-pointer px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-cyan-700 transform hover:scale-105 transition duration-300 ease-in-out border-2 border-blue-800 mb-4">
+                            Subir Imagen
+                        </label>
+                        <input
+                            id="imageUpload"
+                            type="file"
+                            accept="image/*"
+                            class="hidden-file-input"
+                        />
+
+                        <div class="w-full mt-4 border-t-2 border-gray-600 pt-4"> <p class="text-gray-300 font-bold mb-2 text-center">Usa este texto para generar con IA:</p> <div id="ai-prompt-text" class="bg-gray-700 p-3 rounded-md border border-gray-600 text-sm italic text-gray-300 break-words max-h-32 overflow-y-auto mb-3"> ${aiPrompt || 'Generando prompt...'}
+                            </div>
+                            <button id="copy-prompt-button"
+                                class="w-full px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-bold rounded-full shadow hover:from-teal-600 hover:to-cyan-700 transition duration-200 ease-in-out border-2 border-teal-800 text-sm"
+                            >
+                                Copiar Prompt
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-parchment-light p-4 rounded-lg border border-gray-600 shadow-inner"> <h3 class="text-2xl font-fantasy text-yellow-300 mb-4 border-b border-gray-700 pb-2">Datos del Aventurero</h3> <p class="text-lg mb-2"><span class="font-bold">Nombre:</span> ${userData.name}</p>
+                            <p class="text-lg mb-2"><span class="font-bold">Edad:</span> ${userData.age}</p>
+                            <p class="text-lg mb-2"><span class="font-bold">Sexo:</span> ${userData.sex}</p>
+                            <p class="text-sm text-gray-400 mt-4">Registrado el: ${userData.registrationDate} a las ${userData.registrationTime}</p> </div>
+
+                        <div class="bg-parchment-light p-4 rounded-lg border border-gray-600 shadow-inner"> <h3 class="text-2xl font-fantasy text-yellow-300 mb-4 border-b border-gray-700 pb-2">Habilidades para la Vida (Stats)</h3> <div class="space-y-3">
+                                ${skillOrder.map(skill => `
+                                    <div class="flex justify-between items-center text-lg">
+                                        <span class="font-bold">${skill}:</span>
+                                        <span class="px-3 py-1 bg-brown-700 text-white rounded-full shadow-md text-center w-10">${scores[skill] || 0}</span> </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2 bg-parchment-light p-4 rounded-lg border border-gray-600 shadow-inner"> <h3 class="text-2xl font-fantasy text-yellow-300 mb-4 border-b border-gray-700 pb-2">Interpretación de tus Habilidades</h3> <div class="space-y-4 text-gray-300"> ${skillOrder.map(skill => `
+                                    <div>
+                                        <p class="text-lg font-bold text-yellow-400 mb-1">${skill}:</p> <p>${interpretationsResult[skill]}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-8">
+                    <button id="generate-pdf-button"
+                      class="px-8 py-4 bg-gradient-to-r from-red-600 to-rose-700 text-white font-bold rounded-full shadow-lg hover:from-red-700 hover:to-rose-800 transform hover:scale-105 transition duration-300 ease-in-out border-2 border-red-800"
+                    >
+                      Generar PDF de la Ficha
+                    </button>
+                </div>
+            `;
+            appContainer.appendChild(dashboardDiv);
+
+            // Add event listeners
+            document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
+            document.getElementById('copy-prompt-button').addEventListener('click', copyPromptToClipboard);
+            document.getElementById('generate-pdf-button').addEventListener('click', generatePdf);
+        }
+
+
+        // --- Event Handlers and Logic ---
+
+        function startApp() {
+            const now = new Date();
+            userData.registrationDate = now.toLocaleDateString();
+            userData.registrationTime = now.toLocaleTimeString();
+            currentStep = 'basic-data';
+            render();
+        }
+
+        function handleInputChange(event) {
+            const { name, value } = event.target;
+            userData[name] = value;
+        }
+
+        function submitBasicData(event) {
+            event.preventDefault();
+            // Basic validation
+            if (!userData.name || !userData.age || !userData.sex) {
+                alert('Por favor, completa todos los campos.');
+                return;
+            }
+            currentStep = 'questionnaire';
+            render();
+        }
+
+        function handleAnswerChange(questionIndex, value) {
+            answers[questionIndex] = value;
+            // No need to re-render the whole questionnaire on each answer in JS,
+            // the button style update is handled directly in the click listener.
+        }
+
+        function submitQuestionnaire() {
+            // Check if all questions are answered
+            if (Object.keys(answers).length !== questions.length) {
+                alert('Por favor, responde todas las preguntas.');
+                return;
+            }
+
+            const calculatedScores = {};
+            const calculatedInterpretations = {};
+            const skillScoresRaw = {}; // To store raw 3-12 scores for App Script
+
+            questions.forEach((q, index) => {
+              const answerValue = parseInt(answers[index], 10);
+              if (!skillScoresRaw[q.skill]) {
+                skillScoresRaw[q.skill] = 0;
+              }
+              skillScoresRaw[q.skill] += answerValue;
+            });
+
+            // Calculate interpretations and map to 1-5 stats
+            skillOrder.forEach(skill => {
+                const rawScore = skillScoresRaw[skill];
+                let interpretationKey = '';
+                if (rawScore >= 3 && rawScore <= 6) interpretationKey = '3-6';
+                else if (rawScore >= 7 && rawScore <= 9) interpretationKey = '7-9';
+                else if (rawScore >= 10 && rawScore <= 12) interpretationKey = '10-12';
+
+                calculatedInterpretations[skill] = interpretations[skill][interpretationKey];
+                scores[skill] = mapScoreToStat(rawScore); // Store 1-5 stat
+            });
+
+            interpretationsResult = calculatedInterpretations; // Update state
+
+            // Generate AI Prompt (in English) based on raw scores (3-12)
+            const promptParts = [
+                `A ${userData.age} year old fantasy adventurer named ${userData.name || 'Hero'}.`,
+                ` Portrait image illustration physical appearance based on their life skills:`,
+            ];
+
+            // Add traits based on higher raw scores (example logic)
+            skillOrder.forEach(skill => {
+                const rawScore = skillScoresRaw[skill];
+                if (rawScore >= 10) { // High score
+                    promptParts.push(`${skill} (High),`);
+                } else if (rawScore >= 7) { // Medium-High score
+                     promptParts.push(`${skill} (Good),`);
+                }
+                 // Optionally add low scores: else if (rawScore <= 6) { promptParts.push(`${skill} (Developing),`); }
+            });
+
+            // Remove trailing comma from the last trait part
+            if (promptParts.length > 2) {
+                promptParts[promptParts.length - 1] = promptParts[promptParts.length - 1].slice(0, -1); // Remove last comma
+            }
+
+             promptParts.push(`Visualize them in a classic RPG character full-body professional ilustration.`);
+
+
+            aiPrompt = promptParts.join(' '); // Update state
+
+            // Send data to Google Sheets (Asynchronously)
+            sendDataToGoogleSheets({
+                ...userData,
+                answers: answers, // Raw answers 0-3 for Rara vez to Casi siempre
+                rawSkillScores: skillScoresRaw, // Raw total scores 3-12
+            });
+
+            currentStep = 'dashboard';
+            render(); // Render the dashboard
+        }
+
+        // Function to send data to Google Sheets
+        async function sendDataToGoogleSheets(data) {
+            // !!! IMPORTANT: Replace with your deployed Google App Script Web App URL !!!
+            const appScriptUrl = 'https://script.google.com/macros/s/AKfycbw1CRD_POanE2rmDXPuxCdwFE-E2SdM1VU67jYp_8-sLNzf6qXVIvqBkhMm79JkOvHc/exec';
+
+            if (appScriptUrl === 'YOUR_GOOGLE_APP_SCRIPT_WEB_APP_URL') {
+                console.warn("Google App Script URL not configured. Data will not be sent.");
+                // In a real app, you might show a user message here.
+                return;
+            }
+
+            try {
+              const response = await fetch(appScriptUrl, {
+                method: 'POST',
+                mode: 'no-cors', // Use 'no-cors' for simple POST to App Script
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              });
+              // Note: With 'no-cors', you cannot read the response status or body.
+              console.log('Data sent to Google App Script (response not readable due to no-cors)');
+            } catch (error) {
+              console.error('Error sending data to Google Sheets:', error);
+              // In a real app, handle this error (e.g., show a message to the user)
+            }
+        }
+
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    characterImage = reader.result; // Store as Data URL
+                    // Update the image preview element directly
+                    const imgPreview = document.getElementById('character-image-preview');
+                    if (imgPreview) {
+                         imgPreview.innerHTML = `<img src="${characterImage}" alt="Character Portrait" class="w-full h-full object-cover" />`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function copyPromptToClipboard() {
+            navigator.clipboard.writeText(aiPrompt)
+              .then(() => {
+                alert('Prompt copiado al portapapeles!');
+              })
+              .catch(err => {
+                console.error('Error al copiar el prompt:', err);
+                alert('Error al copiar el prompt.');
+              });
+        }
+
+        function generatePdf() {
+            const dashboardElement = document.getElementById('character-sheet-dashboard'); // ID of the dashboard div
+            if (dashboardElement) {
+                // Scroll to the top before capturing to ensure all content is visible
+                dashboardElement.scrollIntoView(true);
+
+                html2canvas(dashboardElement, { scale: 2 }) // Increase scale for better resolution
+                    .then((canvas) => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' portrait, 'mm' units, 'a4' size
+                        const imgWidth = 210; // A4 width in mm
+                        const pageHeight = 297; // A4 height in mm
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        let heightLeft = imgHeight;
+                        let position = 0;
+
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+
+                        while (heightLeft >= 0) {
+                            position = heightLeft - imgHeight;
+                            pdf.addPage();
+                            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                            heightLeft -= pageHeight;
+                        }
+
+                        pdf.save(`${userData.name || 'Mi_Ficha'}_Personaje.pdf`);
+                    });
+            }
+        }
+
+
+        // Initial render when the page loads
+        document.addEventListener('DOMContentLoaded', render);
+
+    </script>
+
+</body>
+</html>
